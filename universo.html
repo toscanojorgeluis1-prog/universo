@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Nuestro Universo</title>
+
+<style>
+
+body{
+margin:0;
+overflow:hidden;
+background:black;
+font-family:Arial;
+color:white;
+}
+
+canvas{
+display:block;
+}
+
+#panel{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(0,0,0,0.85);
+padding:20px;
+border-radius:15px;
+text-align:center;
+max-width:400px;
+display:none;
+box-shadow:0 0 20px purple;
+}
+
+#panel img{
+width:100%;
+border-radius:10px;
+margin-top:10px;
+}
+
+#panel h2{
+margin:0;
+}
+
+</style>
+</head>
+
+<body>
+
+<audio autoplay loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_d7b8d8f1d5.mp3">
+</audio>
+
+<canvas id="space"></canvas>
+
+<div id="panel">
+<h2 id="title"></h2>
+<p id="text"></p>
+<img id="photo">
+</div>
+
+<script>
+
+let canvas=document.getElementById("space")
+let ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let stars=[]
+
+for(let i=0;i<600;i++){
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*2,
+speed:Math.random()*0.2
+})
+}
+
+let centerX=canvas.width/2
+let centerY=canvas.height/2
+
+let planets=[
+{
+orbit:120,
+size:15,
+angle:0,
+speed:0.01,
+title:"Nuestro primer beso",
+text:"El momento donde comenzó nuestro universo.",
+photo:"https://i.imgur.com/0XKzn.jpg"
+},
+
+{
+orbit:200,
+size:18,
+angle:2,
+speed:0.008,
+title:"Nuestro Hijo lindo",
+text:"Ese día supe que quería más momentos contigo.",
+photo:"https://drive.google.com/file/d/1TfXKawvIIogRdwt0aZcSFGncAgB60P29/view?usp=drive_link"
+},
+
+{
+orbit:280,
+size:20,
+angle:4,
+speed:0.006,
+title:"Cuando me enamoré",
+text:"Aquí entendí que eres alguien único para mí.",
+photo:"https://drive.google.com/file/d/1cz2StgWxVU0FE-QeHMeasXNsTw99c9pA/view?usp=drive_link"
+},
+
+{
+orbit:360,
+size:22,
+angle:5,
+speed:0.004,
+title:"Un planeta futuro",
+text:"Los mejores recuerdos contigo aún no existen.",
+photo:"https://drive.google.com/file/d/1WLGVjSqDXHi7apBdkvwAszMLV-CN_h5h/view?usp=drive_link"
+}
+
+{
+orbit:280,
+size:20,
+angle:4,
+speed:0.006,
+title:"Cuando peleamos",
+text:"descubrimos cuanto nos amabamos.",
+photo:"https://drive.google.com/file/d/1sA2WRwr5Lm6PZ5K4Sd5lT49Y7HVBsQv7/view?usp=drive_link"
+},
+
+{
+orbit:280,
+size:20,
+angle:4,
+speed:0.006,
+title:"Cuando me enviabas fotos",
+text:"y brinco por toda la casa de amor.",
+photo:"https://drive.google.com/file/d/1-ZV3iV8G1zMvGcnGUcry6Lrb_e3uQBux/view?usp=drive_link"
+},
+
+]
+
+function drawStars(){
+
+ctx.fillStyle="black"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle="white"
+
+stars.forEach(s=>{
+
+ctx.beginPath()
+ctx.arc(s.x,s.y,s.size,0,Math.PI*2)
+ctx.fill()
+
+s.y+=s.speed
+
+if(s.y>canvas.height){
+s.y=0
+s.x=Math.random()*canvas.width
+}
+
+})
+
+}
+
+function drawSun(){
+
+let gradient=ctx.createRadialGradient(centerX,centerY,10,centerX,centerY,60)
+
+gradient.addColorStop(0,"#fff")
+gradient.addColorStop(1,"orange")
+
+ctx.fillStyle=gradient
+
+ctx.beginPath()
+ctx.arc(centerX,centerY,40,0,Math.PI*2)
+ctx.fill()
+
+}
+
+function drawPlanets(){
+
+planets.forEach(p=>{
+
+p.angle+=p.speed
+
+p.x=centerX+Math.cos(p.angle)*p.orbit
+p.y=centerY+Math.sin(p.angle)*p.orbit
+
+ctx.fillStyle="purple"
+
+ctx.beginPath()
+ctx.arc(p.x,p.y,p.size,0,Math.PI*2)
+ctx.fill()
+
+})
+
+}
+
+function animate(){
+
+drawStars()
+drawSun()
+drawPlanets()
+
+requestAnimationFrame(animate)
+
+}
+
+animate()
+
+canvas.addEventListener("click",function(e){
+
+let rect=canvas.getBoundingClientRect()
+
+let mouseX=e.clientX-rect.left
+let mouseY=e.clientY-rect.top
+
+planets.forEach(p=>{
+
+let dx=mouseX-p.x
+let dy=mouseY-p.y
+
+let dist=Math.sqrt(dx*dx+dy*dy)
+
+if(dist<p.size){
+
+document.getElementById("panel").style.display="block"
+
+document.getElementById("title").innerText=p.title
+document.getElementById("text").innerText=p.text
+document.getElementById("photo").src=p.photo
+
+}
+
+})
+
+})
+
+</script>
+
+</body>
+</html>
